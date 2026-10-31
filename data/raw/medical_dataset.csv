@@ -1,0 +1,16 @@
+original_text,drug_name,strength,dosage,frequency,duration,warnings,side_effects
+DemoMed-A 250 mg. Take one tablet orally twice daily for 5 days. Warning: Avoid driving if drowsy. Side effects include nausea and dizziness.,DemoMed-A,250 mg,one tablet,twice daily,5 days,Avoid driving if drowsy,nausea and dizziness
+DemoMed-B 100 mg. Administer one capsule once daily for 7 days. Warning: Avoid alcohol. Side effects may include headache.,DemoMed-B,100 mg,one capsule,once daily,7 days,Avoid alcohol,headache
+DemoMed-C 500 mg. Take two tablets orally three times daily for 3 days. Warning: Do not exceed the stated amount. Side effects include nausea.,DemoMed-C,500 mg,two tablets,three times daily,3 days,Do not exceed the stated amount,nausea
+DemoMed-D 50 mg. Take one tablet every morning for 10 days. Warning: Store away from children. Side effects may include dizziness.,DemoMed-D,50 mg,one tablet,every morning,10 days,Store away from children,dizziness
+DemoMed-E 200 mg. Take one capsule twice daily for 14 days. Warning: Avoid driving if sleepy. Side effects include headache and nausea.,DemoMed-E,200 mg,one capsule,twice daily,14 days,Avoid driving if sleepy,headache and nausea
+DemoMed-F 10 mg. Take one tablet at bedtime for 5 days. Warning: Do not mix with alcohol. Side effects include sleepiness.,DemoMed-F,10 mg,one tablet,at bedtime,5 days,Do not mix with alcohol,sleepiness
+DemoMed-G 25 mg. Take one tablet once daily for 6 days. Warning: Keep the medicine in a dry place. Side effects may include nausea.,DemoMed-G,25 mg,one tablet,once daily,6 days,Keep the medicine in a dry place,nausea
+DemoMed-H 75 mg. Take one capsule every evening for 8 days. Warning: Avoid driving if dizzy. Side effects include dizziness.,DemoMed-H,75 mg,one capsule,every evening,8 days,Avoid driving if dizzy,dizziness
+DemoMed-I 300 mg. Take one tablet twice daily for 4 days. Warning: Do not share this medicine. Side effects may include headache.,DemoMed-I,300 mg,one tablet,twice daily,4 days,Do not share this medicine,headache
+DemoMed-J 150 mg. Take one capsule once daily for 9 days. Warning: Store away from direct sunlight. Side effects include nausea and sleepiness.,DemoMed-J,150 mg,one capsule,once daily,9 days,Store away from direct sunlight,nausea and sleepiness
+DemoMed-K 400 mg. Take one tablet every morning for 12 days. Warning: Do not use after expiry. Side effects include dizziness.,DemoMed-K,400 mg,one tablet,every morning,12 days,Do not use after expiry,dizziness
+DemoMed-L 20 mg. Take one tablet twice daily for 2 days. Warning: Keep away from children. Side effects may include headache.,DemoMed-L,20 mg,one tablet,twice daily,2 days,Keep away from children,headache
+DemoMed-M 600 mg. Take one tablet once daily for 5 days. Warning: Do not exceed the stated amount. Side effects include nausea.,DemoMed-M,600 mg,one tablet,once daily,5 days,Do not exceed the stated amount,nausea
+DemoMed-N 125 mg. Take one capsule every evening for 7 days. Warning: Avoid alcohol. Side effects include sleepiness and dizziness.,DemoMed-N,125 mg,one capsule,every evening,7 days,Avoid alcohol,sleepiness and dizziness
+DemoMed-O 80 mg. Take one tablet at bedtime for 3 days. Warning: Do not drive if sleepy. Side effects include headache.,DemoMed-O,80 mg,one tablet,at bedtime,3 days,Do not drive if sleepy,headache

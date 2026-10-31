@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Medical Prescription Simplifier</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<header class="header">
+    <div class="brand">
+        <span class="brand-icon">✚</span>
+        <div>
+            <h2>MedSimplify</h2>
+            <p>Medical Language Simplifier</p>
+        </div>
+    </div>
+
+    <span class="header-tag">NLP Powered + OCR</span>
+</header>
+
+
+<main class="container">
+
+    <section class="hero">
+        <span class="eyebrow">HEALTHCARE • NATURAL LANGUAGE PROCESSING</span>
+
+        <h1>Understand your medicine instructions better.</h1>
+
+        <p>
+            Upload a prescription or enter medical text.
+            Extract, simplify and review important medication information.
+        </p>
+    </section>
+
+
+    <!-- DOCUMENT UPLOAD AND TEXT INPUT -->
+
+    <section class="input-card">
+
+        <h2>Upload Prescription or Enter Medical Text</h2>
+
+        <p class="muted">
+            Upload a PDF or prescription image, or enter the text manually.
+            Do not enter personal patient information.
+        </p>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <label for="document">
+                Upload Prescription (PDF, JPG, JPEG, PNG)
+            </label>
+
+            <input
+                type="file"
+                id="document"
+                name="document"
+                accept=".pdf,.jpg,.jpeg,.png"
+            >
+
+            <p class="muted small">
+                Maximum file size: 10 MB. Scanned PDFs and images
+                are processed using Tesseract OCR.
+            </p>
+
+            <button
+                type="submit"
+                name="action"
+                value="extract"
+            >
+                Extract Text from Document
+            </button>
+
+            <hr>
+
+            <label for="medical_text">
+                Medical Text
+            </label>
+
+            <textarea
+                id="medical_text"
+                name="medical_text"
+                placeholder="Paste your medical instructions here, or upload a document and extract its text..."
+                maxlength="10000"
+            >{{ original_text }}</textarea>
+
+            {% if ocr_info and ocr_info.method %}
+
+                <div class="status success">
+                    ✓ Text extracted successfully
+                    <br>
+                    Method: {{ ocr_info.method }}
+                    <br>
+                    Pages processed: {{ ocr_info.pages }}
+                </div>
+
+                <p class="muted small">
+                    Review and correct the extracted text before analysis.
+                    OCR may incorrectly recognize medicine names, numbers,
+                    dosage instructions or warnings.
+                </p>
+
+            {% endif %}
+
+            <div class="input-footer">
+                <span>Maximum 10,000 characters</span>
+
+                <button
+                    type="submit"
+                    name="action"
+                    value="analyze"
+                >
+                    Analyze Medical Text →
+                </button>
+            </div>
+
+            {% if ocr_info and ocr_info.method %}
+
+                <input
+                    type="hidden"
+                    name="ocr_method"
+                    value="{{ ocr_info.method }}"
+                >
+
+                <input
+                    type="hidden"
+                    name="ocr_pages"
+                    value="{{ ocr_info.pages }}"
+                >
+
+            {% endif %}
+
+        </form>
+
+        {% if error %}
+            <div class="error">
+                {{ error }}
+            </div>
+        {% endif %}
+
+    </section>
+
+
+<!-- BATCH DOCUMENT PROCESSING -->
+
+<section class="input-card">
+
+    <h2>Batch Prescription Processing</h2>
+
+    <p class="muted">
+        Upload up to 5 prescription documents together.
+        Supported formats: PDF, JPG, JPEG and PNG.
+    </p>
+
+    <form
+        action="{{ url_for('batch_upload') }}"
+        method="POST"
+        enctype="multipart/form-data"
+    >
+
+        <label for="documents">
+            Select Multiple Documents
+        </label>
+
+        <input
+            type="file"
+            id="documents"
+            name="documents"
+            accept=".pdf,.jpg,.jpeg,.png"
+            multiple
+            required
+        >
+
+        <p class="muted small">
+            Maximum 5 files. Maximum 10 MB per file.
+        </p>
+
+        <button type="submit">
+            Process All Documents →
+        </button>
+
+    </form>
+
+</section>
+
+
+{% if batch_results %}
+
+<section class="results">
+
+    <div class="section-heading">
+        <h2>Batch Processing Results</h2>
+        <span>Processing completed</span>
+    </div>
+
+    <div class="card">
+
+        <h3>Document Summary</h3>
+
+        <p>
+            Total documents:
+            <strong>{{ batch_results|length }}</strong>
+        </p>
+
+        <p>
+            Successfully processed:
+            <strong>
+                {{ batch_results|selectattr('status', 'equalto', 'Processed')|list|length }}
+            </strong>
+        </p>
+
+        <p>
+            Failed:
+            <strong>
+                {{ batch_results|selectattr('status', 'equalto', 'Failed')|list|length }}
+            </strong>
+        </p>
+
+    </div>
+
+    {% for item in batch_results %}
+
+    <div class="card">
+
+        <h3>{{ loop.index }}. {{ item.filename }}</h3>
+
+        <p>
+            Status:
+            <strong>{{ item.status }}</strong>
+        </p>
+
+        {% if item.status == "Processed" %}
+
+            <p>
+                Drug:
+                {{ item.extracted.drug_name }}
+            </p>
+
+            <p>
+                Strength:
+                {{ item.extracted.strength }}
+            </p>
+
+            <p>
+                Dosage:
+                {{ item.extracted.dosage }}
+            </p>
+
+            <p>
+                Frequency:
+                {{ item.extracted.frequency }}
+            </p>
+
+            <p>
+                Duration:
+                {{ item.extracted.duration }}
+            </p>
+
+            <p>
+                Extraction completeness:
+                {{ item.completeness }}%
+            </p>
+
+            <p>
+                Verification checks passed:
+                {{ item.verification_passed }}
+            </p>
+
+            <h4>Simplified Text</h4>
+
+            <div class="simplified-output">
+                {{ item.simplified }}
+            </div>
+
+            <p class="muted small">
+                Processing method: {{ item.method }}
+            </p>
+
+        {% else %}
+
+            <p class="fail">
+                Error: {{ item.error }}
+            </p>
+
+        {% endif %}
+
+    </div>
+
+    {% endfor %}
+
+    {% if batch_csv_base64 %}
+
+    <div class="card">
+
+        <h3>Download Batch Report</h3>
+
+        <a
+            href="data:text/csv;base64,{{ batch_csv_base64 }}"
+            download="batch_results.csv"
+            class="batch-download"
+        >
+            Download CSV Report
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% endif %}
+
+    {% if result %}
+
+    <section class="results">
+
+        <div class="section-heading">
+            <h2>Analysis Results</h2>
+            <span>Processing completed</span>
+        </div>
+
+
+        <!-- OCR SOURCE -->
+
+        {% if result.ocr_info and result.ocr_info.method %}
+
+        <div class="card">
+
+            <h3>Document Processing Information</h3>
+
+            <p>
+                <strong>Processing method:</strong>
+                {{ result.ocr_info.method }}
+            </p>
+
+            <p>
+                <strong>Pages processed:</strong>
+                {{ result.ocr_info.pages }}
+            </p>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- EXTRACTED INFORMATION -->
+
+        <div class="card">
+
+            <h3>1. Extracted Medical Information</h3>
+
+            <div class="info-grid">
+
+                {% for key, value in result.extracted.items() %}
+
+                <div class="info-item">
+
+                    <span class="info-label">
+                        {{ key.replace('_', ' ').title() }}
+                    </span>
+
+                    <strong>
+                        {% if value is iterable and value is not string %}
+                            {{ value | join(', ') }}
+                        {% else %}
+                            {{ value }}
+                        {% endif %}
+                    </strong>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+<!-- EXTRACTION QUALITY PANEL -->
+
+<div class="card">
+
+    <h3>Extraction Quality Assessment</h3>
+
+    <div class="status success">
+        {{ result.extraction_quality.status }}
+    </div>
+
+    <div class="improvement">
+        <strong>
+            {{ result.extraction_quality.completeness_percentage }}%
+        </strong>
+        Extraction completeness
+
+        <p class="muted small">
+            {{ result.extraction_quality.detected_count }}
+            out of
+            {{ result.extraction_quality.total_fields }}
+            fields detected.
+        </p>
+    </div>
+
+    <h4>Detected Fields</h4>
+
+    {% for field in result.extraction_quality.detected_fields %}
+        <p class="pass">✓ {{ field }}</p>
+    {% else %}
+        <p>No fields detected.</p>
+    {% endfor %}
+
+    <h4>Missing Fields</h4>
+
+    {% for field in result.extraction_quality.missing_fields %}
+        <p class="fail">⚠ {{ field }}</p>
+    {% else %}
+        <p>No missing fields detected.</p>
+    {% endfor %}
+
+    <h4>Manual Review Required</h4>
+
+    {% for warning in result.extraction_quality.review_fields %}
+        <p class="fail">⚠ {{ warning }}</p>
+    {% else %}
+        <p class="muted">
+            No additional review flags were generated.
+        </p>
+    {% endfor %}
+
+    <p class="muted small">
+        This is a rule-based completeness assessment,
+        not a medical accuracy or confidence score.
+        Always check the original prescription.
+    </p>
+
+</div>
+
+
+        <!-- SIMPLIFIED TEXT -->
+
+        <div class="card simplified-card">
+
+            <h3>2. Patient-Friendly Explanation</h3>
+
+            <div class="simplified-output">
+                {{ result.simplified }}
+            </div>
+
+            <p class="muted small">
+                Generated using rule-based text simplification.
+            </p>
+
+        </div>
+
+
+        <!-- VERIFICATION -->
+
+        <div class="card">
+
+            <h3>3. Faithfulness Verification</h3>
+
+            {% if result.verification.verification_passed %}
+
+                <div class="status success">
+                    ✓ All implemented verification checks passed
+                </div>
+
+            {% else %}
+
+                <div class="status failure">
+                    ⚠ Verification failed.
+                    Original text has been retained.
+                </div>
+
+            {% endif %}
+
+            <div class="check-grid">
+
+                {% for key, value in result.verification.checks.items() %}
+
+                <div class="check-item">
+
+                    <span>{{ key.replace('_', ' ').title() }}</span>
+
+                    {% if value %}
+                        <span class="pass">PASS</span>
+                    {% else %}
+                        <span class="fail">FAIL</span>
+                    {% endif %}
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            <p class="muted small">
+                Automated checks are not proof of clinical accuracy.
+                Human review is required before using medication instructions.
+            </p>
+
+        </div>
+
+
+        <!-- READABILITY -->
+
+        <div class="card">
+
+            <h3>4. Readability Analysis</h3>
+
+            <div class="readability-grid">
+
+                <div class="score-card">
+                    <span>Flesch Reading Ease</span>
+                    <strong>
+                        {{ result.original_readability.flesch_reading_ease }}
+                    </strong>
+                    <small>Original</small>
+                    <strong>
+                        {{ result.simplified_readability.flesch_reading_ease }}
+                    </strong>
+                    <small>Simplified</small>
+                </div>
+
+                <div class="score-card">
+                    <span>Flesch-Kincaid Grade</span>
+                    <strong>
+                        {{ result.original_readability.fk_grade }}
+                    </strong>
+                    <small>Original</small>
+                    <strong>
+                        {{ result.simplified_readability.fk_grade }}
+                    </strong>
+                    <small>Simplified</small>
+                </div>
+
+                <div class="score-card">
+                    <span>Gunning Fog Index</span>
+                    <strong>
+                        {{ result.original_readability.gunning_fog }}
+                    </strong>
+                    <small>Original</small>
+                    <strong>
+                        {{ result.simplified_readability.gunning_fog }}
+                    </strong>
+                    <small>Simplified</small>
+                </div>
+
+                <div class="score-card">
+                    <span>SMOG Index</span>
+                    <strong>
+                        {{ result.original_readability.smog }}
+                    </strong>
+                    <small>Original</small>
+                    <strong>
+                        {{ result.simplified_readability.smog }}
+                    </strong>
+                    <small>Simplified</small>
+                </div>
+
+            </div>
+
+            <div class="improvement">
+
+                Flesch Reading Ease change:
+
+                <strong>
+                    {{ result.readability_improvement }} points
+                </strong>
+
+                <p class="muted small">
+                    A higher Flesch Reading Ease score generally
+                    indicates easier reading.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ORIGINAL TEXT -->
+
+        <div class="card">
+
+            <h3>5. Original Medical Text</h3>
+
+            <div class="original-output">
+                {{ original_text }}
+            </div>
+
+        </div>
+
+
+    </section>
+
+    {% endif %}
+
+
+    <section class="disclaimer">
+
+        <strong>Medical Disclaimer</strong>
+
+        <p>{{ disclaimer }}</p>
+
+        <p>
+            This application is an educational NLP prototype.
+            It may miss or incorrectly interpret medical information.
+            Always verify medication instructions with a qualified
+            healthcare professional.
+        </p>
+
+    </section>
+
+</main>
+
+
+<footer>
+    Medical Prescription and Drug Leaflet Simplifier
+    <br>
+    NLP Student Project
+</footer>
+
+</body>
+</html>

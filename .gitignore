@@ -1,0 +1,39 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+*.log
+temp_*
+__pycache__/
+
+# Test-generated files
+test_prescription.png
+test_prescription.pdf
+test_scanned_prescription.pdf
+sample_prescription_image.png
+batch_results.csv
+
+# Python testing
+.pytest_cache/
+.coverage
+
+# Operating system
+Thumbs.db
+.DS_Store

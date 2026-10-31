@@ -1,0 +1,8 @@
+field,precision,recall,f1_score
+drug_name,100.0,100.0,100.0
+strength,100.0,100.0,100.0
+dosage,100.0,100.0,100.0
+frequency,100.0,100.0,100.0
+duration,100.0,100.0,100.0
+warnings,0.0,0.0,0
+side_effects,33.33,33.33,33.33
